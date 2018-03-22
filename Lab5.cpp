@@ -69,7 +69,13 @@ Signal::Signal(){
 }
 Signal::Signal(int fileNum){
 	string name;
+	if(fileNum < 10){
 	name = "Raw_data_0" + to_string(fileNum) + ".txt";
+	}
+	else{
+	name = "Raw_data_" + to_string(fileNum) + ".txt";
+	}
+
 	ifstream inFS;
 	int i = 0;
 
@@ -113,9 +119,12 @@ void Signal::offsetData(double offset){
 	cout << "inside offset method" << endl;
 	cout << "length = " << length << endl;
 	double tempVal = 0;
+	newData.clear();
+
 	for(int i = 0; i < length; i++){
-			tempVal = (rawData[i] * offset);
+			tempVal = (rawData[i] + offset);
 			cout << "Temp value: " << tempVal << endl;
+			//newData.empty();
 			newData.push_back(tempVal);
 	}
 }
@@ -124,10 +133,11 @@ void Signal::scaleData(double scale){
 	cout << "inside scaling method" << endl;
 	cout << "length = " << length << endl;
 	double tempVal = 0;
+	newData.clear();
 	for(int i = 0; i < length; i++){
-			tempVal = (rawData[i] + scale);
-			cout << "Temp value: " << tempVal << endl;
-			newData.push_back(tempVal);
+		tempVal = (rawData[i] * scale);
+		cout << "Temp value: " << tempVal << endl;
+		newData.push_back(tempVal);
 	}
 }
 
@@ -153,7 +163,7 @@ int Signal::getMax(){	//returns the maximum number in the data
 }
 
 void Signal::getMin(){	//returns the maximum number in the data
-	int min;
+	int min = 0;
 	for(int i = 0; i < length ; i++){
 		if(rawData[i] < min){
 			min = rawData[i];
@@ -166,6 +176,7 @@ void Signal::normalizeData(){
 	double tempVal = 0;
 	int max = this->getMax();	//calls getMax for the current object by using 'this' keyword
 	cout << "Max: " << max << endl;
+	newData.clear();
 
 	for( int i = 0; i < length ; i++){
 		tempVal = (rawData[i] / static_cast<double>(max));	//divide each data member by the max value
@@ -178,6 +189,7 @@ void Signal::centerData(){
 	double tempVal = 0;
 	double a = this->getAverage();	//calls getAverage to get the average value of the raw data
 	cout << "Average: " << a << endl;
+	newData.clear();
 
 	for( int i = 0; i < length ; i++){
 		tempVal = (rawData[i] - a);	//subtract each data value by the average
@@ -199,9 +211,7 @@ void Signal::getStats(){
 		for(int x = 0; x < length; x++){
 			cout << newData[x] << "   ";
 		}
-
-		cout << "\nAverage = " << this->getAverage() << endl;
-		cout << "Max = " << this->getMax() << endl;
+		cout << endl;
 	}
 	else cout << "\nNo new Data." << endl;
 }
